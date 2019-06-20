@@ -37,6 +37,9 @@ var ChatFactory = function(config) {
 		},
 		updateUserDataChat: function(url) {
 			this._chatapi.updateUserDataChat(url);
+		},		
+		refreshChat: function(url) {		
+			this._chatapi._refreshChat(url);
 		}
 	}
 	
@@ -118,70 +121,78 @@ Chat.createAPIv2 = function(config) {
 			me._config.baseURL = me._config.baseURL + '/genesys/2';
     	},
     	
+		
     	// Start the Chat with the formchat values
         startChat: function(formchat) {
-        
-        	var me = this;
-        	
-        	var url = me._config.baseURL + '/chat/' + me._config.chatServiceName;
-			const request = new XMLHttpRequest();
-			//request.responseType = "json";
-			request.open("POST", url,true);
-			request.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
-			request.onerror = function() {
-				me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-401"]);
+			var me = this;
+			console.log(formchat.search("ChatCookie"));
+			if(formchat.search("ChatCookie") >= 0)
+			{
+				//me._config.baseURL = 10;
+				console.log(ChatId);
+				
+				me._startChatRefresh();
+				me._refreshChat();
+				console.log("เคส1");
+				me._config.onStarted();
+				me._getlimitfileChat();
 			}
-			request.onreadystatechange = function() {
-				if(request.readyState == 4 && request.status == 200) {
-					if ( me._config.debug === true ) {
-						console.log("startChat responseqq -> "+JSON.stringify(request.responseText));
+			else
+			{
+				
+				
+				var url = me._config.baseURL + '/chat/' + me._config.chatServiceName;
+				const request = new XMLHttpRequest();
+				//request.responseType = "json";
+				request.open("POST", url,true);
+				request.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+				request.onerror = function() {
+					if(request.status == 0)
+					{	internet = false;
+						if(wgLanguage == "TH")
+						{
+							onMessageAlert(dataMessageTH["Error-408"]);
+						}
+						else if(wgLanguage == "EN")
+						{
+							onMessageAlert(dataMessageEN["Error-408"]);
+						}
 					}
-					var oo = JSON.parse(request.responseText);
-					me._chatId = oo.chatId;
-					me._userId = oo.userId;
-					me._secureKey = oo.secureKey;
-					me._alias = oo.alias;
-					// Save off the transcript position
-					me._transcriptPosition = 1;
-					
-					// Let listeners know that the chat session started successfully
-					me._config.onStarted();
-					me._getlimitfileChat();
-					// Start the interval polling for transcript updates
-					me._startChatRefresh();
-					me._refreshChat();
-					
-				}else if(request.status == 102){
-					me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-102"]);
-				}else if(request.status == 103){
-					me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-103"]);
-				}else if(request.status == 161){
-					me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-161"]);
-				}else if(request.status == 204){
-					me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-204"]);
-				}else if(request.status == 401){
-					me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-401"]);
-				}else if(request.status == 403){
-					me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-403"])
-				}else if(request.status == 404){
-					me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-404"])
-				}else if(request.status == 405){
-					me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-405"])
-				}else if(request.status == 406){
-					me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-406"])
-				}else if(request.status == 408){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-408"])
-				}else if(request.status == 500){
-					me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-500"])
-				}else if(request.status == 502){
-					me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-502"])
-				}else if(request.status == 504){
-					me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-504"])
+					else
+					{
+						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-401"]);
+					}						
+						console.log(request.status);
 				}
-				
-				
+				request.onreadystatechange = function() {
+					if(request.readyState == 4 && request.status == 200) {
+						if ( me._config.debug === true ) {
+							console.log("startChat responseqq -> "+JSON.stringify(request.responseText));
+						}
+						var oo = JSON.parse(request.responseText);
+						me._chatId = oo.chatId;
+						me._userId = oo.userId;
+						me._secureKey = oo.secureKey;
+						me._alias = oo.alias;
+						// Save off the transcript position
+						me._transcriptPosition = 1;
+						UserId = oo.userId;
+						SecureKey = oo.secureKey;
+						Alias = oo.alias;
+						TranscriptPosition = 1;
+						ChatId = oo.chatId;
+						// Let listeners know that the chat session started successfully
+						me._config.onStarted();
+						me._getlimitfileChat();
+						// Start the interval polling for transcript updates
+						me._startChatRefresh();
+						me._refreshChat();
+						console.log("เคส2");
+						
+					}					
+				}
+				request.send(formchat);
 			}
-			request.send(formchat);
         },
         
         // End the chat session
@@ -197,7 +208,22 @@ Chat.createAPIv2 = function(config) {
 			request.open("POST", url);
 			request.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
 			request.onerror = function() {
-				me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-401"]);
+				if(request.status == 0)
+				{						
+					if(wgLanguage == "TH")
+					{
+						onMessageAlert(dataMessageTH["Error-408"]);					
+					}
+					else if(wgLanguage == "EN")
+					{
+						onMessageAlert(dataMessageEN["Error-408"]);
+					}
+				}
+				else
+				{
+					me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-401"]);
+				}						
+				console.log(request.status);
 			}
 			request.onreadystatechange = function() {
 				if(request.readyState == 4 ){ 
@@ -219,32 +245,6 @@ Chat.createAPIv2 = function(config) {
 						
 						// Let the listeners know that the chat has ended
 						me._config.onEnded();
-					}else if(request.status == 102){
-					me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-102"]);
-					}else if(request.status == 103){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-103"]);
-					}else if(request.status == 161){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-161"]);
-					}else if(request.status == 204){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-204"]);
-					}else if(request.status == 401){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-401"]);
-					}else if(request.status == 403){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-403"])
-					}else if(request.status == 404){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-404"])
-					}else if(request.status == 405){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-405"])
-					}else if(request.status == 406){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-406"])
-					}else if(request.status == 408){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-408"])
-					}else if(request.status == 500){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-500"])
-					}else if(request.status == 502){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-502"])
-					}else if(request.status == 504){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-504"])
 					}
 				}
 			}
@@ -375,7 +375,22 @@ Chat.createAPIv2 = function(config) {
 			request.open("POST", url);
 			request.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
 			request.onerror = function() {
-				me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-401"]);
+				if(request.status == 0)
+				{			
+					if(wgLanguage == "TH")
+					{
+						onMessageAlert(dataMessageTH["Error-408"]);					
+					}
+					else if(wgLanguage == "EN")
+					{
+						onMessageAlert(dataMessageEN["Error-408"]);					
+					}
+				}
+				else
+				{
+					me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-401"]);
+				}						
+				console.log(request.status);
 			}
 			request.onreadystatechange = function() {
 				if(request.readyState == 4 ){ 
@@ -384,32 +399,6 @@ Chat.createAPIv2 = function(config) {
 							console.log("sendMessage response -> "+JSON.stringify(request.responseText));
 						}
 						var oo = JSON.parse(request.responseText);
-					}else if(request.status == 102){
-					me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-102"]);
-					}else if(request.status == 103){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-103"]);
-					}else if(request.status == 161){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-161"]);
-					}else if(request.status == 204){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-204"]);
-					}else if(request.status == 401){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-401"]);
-					}else if(request.status == 403){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-403"])
-					}else if(request.status == 404){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-404"])
-					}else if(request.status == 405){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-405"])
-					}else if(request.status == 406){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-406"])
-					}else if(request.status == 408){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-408"])
-					}else if(request.status == 500){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-500"])
-					}else if(request.status == 502){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-502"])
-					}else if(request.status == 504){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-504"])
 					}
 				}
 			}
@@ -422,7 +411,10 @@ Chat.createAPIv2 = function(config) {
 			var me = this;
 			
 			me._chatRefreshIntervalId = setInterval( function() {
-				me._refreshChat();
+				
+					me._refreshChat();
+				
+				console.log("เคส3");
 			}, 5000);
 		},
 		
@@ -436,9 +428,21 @@ Chat.createAPIv2 = function(config) {
 		
 		// Refresh the Chat transcript by making a 'refresh' request
 		_refreshChat: function() {
-		
 			var me = this;
-			
+			if(chat == "ChatCookie")					
+			{		
+				me._userId = UserId;		
+				me._secureKey = SecureKey;		
+				me._alias = Alias;		
+				me._transcriptPosition = TranscriptPosition;		
+				me._chatId = ChatId;		
+				console.log(me._userId);		
+				console.log(me._secureKey);		
+				console.log(me._alias);		
+				console.log(me._transcriptPosition);		
+				console.log(me._chatId);		
+				chat = "";		
+			}
 			var params = 'userId=' + me._userId + '&secureKey=' + me._secureKey + '&alias=' + me._alias + '&transcriptPosition=' + me._transcriptPosition;
 			var url = me._config.baseURL + '/chat/' + me._config.chatServiceName + '/' + me._chatId + '/refresh';
 			const request = new XMLHttpRequest();
@@ -446,26 +450,75 @@ Chat.createAPIv2 = function(config) {
 			request.open("POST", url);
 			request.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
 			request.onerror = function() {
-				me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-401"]);
-				 
+				if(request.status == 0)
+				{	internet = false;
+					console.log(wgLanguage);
+					if(wgLanguage == "TH")
+					{
+					onMessageAlert(dataMessageTH["Error-0"]);
+					}
+					else if(wgLanguage == "EN")
+					{
+					onMessageAlert(dataMessageEN["Error-0"]);
+					}
+				}
+				else
+				{
+					me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-401"]);
+				}						
+				console.log(request.status);		
 			}
 			request.onreadystatechange = function() {
 				if(request.readyState == 4 && request.status == 200){ 
+					if(internet == false)
+					{
+						$(".comfirm-end-background").addClass("hide");
+						$(".comfirm-end-box").addClass("hide");
+						internet = true;
+					}
 					if ( me._config.debug === true ) {
 						console.log("_refreshChat response -> "+JSON.stringify(request.responseText));
 					}
 					// Update the transcript position
+					
 					var oo = JSON.parse(request.responseText);
-					me._transcriptPosition = oo.nextPosition;
-					// For each item in the transcript...
-					$.each(oo.messages, function(index, message) {
-						console.log("message : "+JSON.stringify(message));	
-						if(message.type === "FileUploaded"){
-							me._config.onFileReceived(message.from.type, message.from.nickname,message.userData);
-						} else{
-							me._config.onMessageReceived(message.from.type,message.type, message.from.nickname, message.text, oo.chatEnded);
-						}
-					});
+					console.log(oo.chatEnded);
+					console.log(oo.errors);
+					if((oo.chatEnded == true && !oo.errors && internet == false)||(oo.chatEnded == true && !oo.errors || internet == false)||(oo.chatEnded == true && oo.errors && internet == false))
+					{
+						
+						me._stopChatRefresh();
+						console.log("เข้าเคสรีเฟลชไม่ปกติ");
+						setCookie("username", user, 0.00001);
+						createMessage(wgMsgAgent,wgSystem[wgLanguage]["messageresponse"]["Leftchat"]);
+						createMessage(wgMsgCustomer,wgSystem[wgLanguage]["messageresponse"]["Leftchat"]); 
+						removeTyping();
+						$('#btn-Send').prop('disabled', true);
+						$('#uploadfile').prop('disabled', true);
+						// $('#btn-emoji').prop('disabled', true);
+						document.getElementById("btn-emoji").disabled = true;
+						$('#messagechat').prop('disabled', true);
+						internet = true;
+					}
+					else if(!oo.chatEnded && !oo.errors && internet)
+					{
+						user = "ChatCookie";		
+						console.log("user2 : "+user);		
+						setCookie("username", user, 0.00105);
+						internet = true;
+						console.log("เข้าเคสรีเฟลชได้ปกติ");
+						me._transcriptPosition = oo.nextPosition;
+						// For each item in the transcript...
+						$.each(oo.messages, function(index, message) {
+							console.log("message : "+JSON.stringify(message));	
+							if(message.type === "FileUploaded"){
+								me._config.onFileReceived(message.from.type, message.from.nickname,message.userData);
+							} else{
+								console.log("เข้ามีส่งข้อความ");
+								me._config.onMessageReceived(message.from.type,message.type, message.from.nickname, message.text, oo.chatEnded);
+							}
+						});
+					}
 					
 					// If the chat has ended, perhaps by the agent ending the chat, then
 					// stop the interval object from polling for transcript updates
@@ -473,32 +526,6 @@ Chat.createAPIv2 = function(config) {
 						me._stopChatRefresh();
 						me._config.onEnded()
 					}
-				}else if(request.status == 102){
-					me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-102"]);
-				}else if(request.status == 103){
-					me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-103"]);
-				}else if(request.status == 161){
-					me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-161"]);
-				}else if(request.status == 204){
-					me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-204"]);
-				}else if(request.status == 401){
-					me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-401"]);
-				}else if(request.status == 403){
-					me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-403"])
-				}else if(request.status == 404){
-					me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-404"])
-				}else if(request.status == 405){
-					me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-405"])
-				}else if(request.status == 406){
-					me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-406"])
-				}else if(request.status == 408){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-408"])
-				}else if(request.status == 500){
-					me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-500"])
-				}else if(request.status == 502){
-					me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-502"])
-				}else if(request.status == 504){
-					me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-504"])
 				}
 			}
 			request.send(params);
@@ -532,7 +559,23 @@ Chat.createAPIv2 = function(config) {
 			request.open("POST", url);
 			request.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
 			request.onerror = function() {
-				me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-401"]);
+				if(request.status == 0)
+				{	
+					
+					if(wgLanguage == "TH")
+					{
+					onMessageAlert(dataMessageTH["Error-408"]);
+					}
+					else if(wgLanguage == "EN")
+					{
+					onMessageAlert(dataMessageEN["Error-408"]);
+					}
+				}
+				else
+				{
+					me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-401"]);
+				}						
+				console.log(request.status);	
 			}
 			request.onreadystatechange = function() {
 				
@@ -550,32 +593,6 @@ Chat.createAPIv2 = function(config) {
 							me._config.onDownloadFile(request.response,fileName);
 						}
 						
-				}else if(request.status == 102){
-					me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-102"]);
-				}else if(request.status == 103){
-					me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-103"]);
-				}else if(request.status == 161){
-					me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-161"]);
-				}else if(request.status == 204){
-					me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-204"]);
-				}else if(request.status == 401){
-					me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-401"]);
-				}else if(request.status == 403){
-					me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-403"])
-				}else if(request.status == 404){
-					me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-404"])
-				}else if(request.status == 405){
-					me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-405"])
-				}else if(request.status == 406){
-					me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-406"])
-				}else if(request.status == 408){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-408"])
-				}else if(request.status == 500){
-					me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-500"])
-				}else if(request.status == 502){
-					me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-502"])
-				}else if(request.status == 504){
-					me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-504"])
 				}
 			}
 			request.send(params);
@@ -583,6 +600,12 @@ Chat.createAPIv2 = function(config) {
 		
 		_getlimitfileChat: function() {
         	var me = this;
+			console.log("เข้าgetlimitfile");			
+			console.log(me._userId);		
+			console.log(me._secureKey);		
+			console.log(me._alias);		
+			console.log(me._transcriptPosition);		
+			console.log(me._chatId);
 			var params = 'userId=' + me._userId + '&secureKey=' + me._secureKey + '&alias=' + me._alias;
 			var url = me._config.baseURL + '/chat/' + me._config.chatServiceName + '/' + me._chatId + '/file/limits';
 			const request = new XMLHttpRequest();
@@ -590,7 +613,22 @@ Chat.createAPIv2 = function(config) {
 			request.open("POST", url);
 			request.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
 			request.onerror = function() {
-				me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-401"]);
+				if(request.status == 0)
+				{	
+					if(wgLanguage == "TH")
+					{
+					onMessageAlert(dataMessageTH["Error-408"]);
+					}
+					else if(wgLanguage == "EN")
+					{
+					onMessageAlert(dataMessageEN["Error-408"]);
+					}
+				}
+				else
+				{
+					me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-401"]);
+				}						
+				console.log(request.status);	
 			}
 			request.onreadystatechange = function() {
 				if(request.readyState == 4 ){ 
@@ -610,32 +648,6 @@ Chat.createAPIv2 = function(config) {
 						me._usedUploadMaxFiles = temp["used-upload-max-files"];
 						me._usedUploadMaxTotalSize = temp["used-upload-max-total-size"];
 						me._usedDownloadAttempts = temp["used-download-attempts"];
-					}else if(request.status == 102){
-					me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-102"]);
-					}else if(request.status == 103){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-103"]);
-					}else if(request.status == 161){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-161"]);
-					}else if(request.status == 204){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-204"]);
-					}else if(request.status == 401){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-401"]);
-					}else if(request.status == 403){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-403"])
-					}else if(request.status == 404){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-404"])
-					}else if(request.status == 405){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-405"])
-					}else if(request.status == 406){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-406"])
-					}else if(request.status == 408){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-408"])
-					}else if(request.status == 500){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-500"])
-					}else if(request.status == 502){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-502"])
-					}else if(request.status == 504){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-504"])
 					}
 				}
 			}
@@ -657,7 +669,7 @@ Chat.createAPIv2 = function(config) {
 			
 			var sptname =  fileup[0].name.split(".");
 			
-			if(me._uploadFileTypes.search(sptname[sptname.length-1]) == -1){
+			if(me._uploadFileTypes.search(sptname[sptname.length-1].toLowerCase()) == -1){
 				me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-File-Types"])
 				return;
 			}	
@@ -688,7 +700,22 @@ Chat.createAPIv2 = function(config) {
 			// request.setRequestHeader("Content-Type",!1);
 			request.overrideMimeType("multipart/form-data;");
 			request.onerror = function() {
-				me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-401"]);
+				if(request.status == 0)
+				{	
+					if(wgLanguage == "TH")
+					{
+					onMessageAlert(dataMessageTH["Error-408"]);
+					}
+					else if(wgLanguage == "EN")
+					{
+					onMessageAlert(dataMessageEN["Error-408"]);
+					}
+				}
+				else
+				{
+					me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-401"]);
+				}						
+				console.log(request.status);			 
 			}
 			request.onreadystatechange = function() {
 				if(request.readyState == 4 ){ 
@@ -699,32 +726,6 @@ Chat.createAPIv2 = function(config) {
 						}
 						var oo = JSON.parse(request.responseText);
 						me._getlimitfileChat();
-					}else if(request.status == 102){
-					me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-102"]);
-					}else if(request.status == 103){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-103"]);
-					}else if(request.status == 161){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-161"]);
-					}else if(request.status == 204){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-204"]);
-					}else if(request.status == 401){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-401"]);
-					}else if(request.status == 403){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-403"])
-					}else if(request.status == 404){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-404"])
-					}else if(request.status == 405){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-405"])
-					}else if(request.status == 406){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-406"])
-					}else if(request.status == 408){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-408"])
-					}else if(request.status == 500){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-500"])
-					}else if(request.status == 502){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-502"])
-					}else if(request.status == 504){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-504"])
 					}
 				}
 			}
@@ -744,7 +745,22 @@ Chat.createAPIv2 = function(config) {
 			request.open("POST", url);
 			request.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
 			request.onerror = function() {
-				me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-401"]);
+				if(request.status == 0)
+				{	
+					if(wgLanguage == "TH")
+					{
+					onMessageAlert(dataMessageTH["Error-408"]);
+					}
+					else if(wgLanguage == "EN")
+					{
+					onMessageAlert(dataMessageEN["Error-408"]);
+					}
+				}
+				else
+				{
+					me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-401"]);
+				}						
+				console.log(request.status);		
 			}
 			request.onreadystatechange = function() {
 				if(request.readyState == 4 ){ 
@@ -755,32 +771,6 @@ Chat.createAPIv2 = function(config) {
 						}
 						var oo = JSON.parse(request.responseText);
 						me._readReceiptChat();
-					}else if(request.status == 102){
-					me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-102"]);
-					}else if(request.status == 103){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-103"]);
-					}else if(request.status == 161){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-161"]);
-					}else if(request.status == 204){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-204"]);
-					}else if(request.status == 401){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-401"]);
-					}else if(request.status == 403){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-403"])
-					}else if(request.status == 404){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-404"])
-					}else if(request.status == 405){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-405"])
-					}else if(request.status == 406){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-406"])
-					}else if(request.status == 408){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-408"])
-					}else if(request.status == 500){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-500"])
-					}else if(request.status == 502){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-502"])
-					}else if(request.status == 504){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-504"])
 					}
 				}
 			}
@@ -799,7 +789,22 @@ Chat.createAPIv2 = function(config) {
 			request.open("POST", url);
 			request.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
 			request.onerror = function() {
-				me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-401"]);
+				if(request.status == 0)
+				{	
+					if(wgLanguage == "TH")
+					{
+					onMessageAlert(dataMessageTH["Error-408"]);
+					}
+					else if(wgLanguage == "EN")
+					{
+					onMessageAlert(dataMessageEN["Error-408"]);
+					}
+				}
+				else
+				{
+					me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-401"]);
+				}						
+				console.log(request.status);		
 			}
 			request.onreadystatechange = function() {
 				if(request.readyState == 4){ 
@@ -809,32 +814,6 @@ Chat.createAPIv2 = function(config) {
 							console.log("stopTyping response -> "+JSON.stringify(request.responseText));
 						}
 						var oo = JSON.parse(request.responseText);
-					}else if(request.status == 102){
-					me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-102"]);
-					}else if(request.status == 103){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-103"]);
-					}else if(request.status == 161){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-161"]);
-					}else if(request.status == 204){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-204"]);
-					}else if(request.status == 401){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-401"]);
-					}else if(request.status == 403){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-403"])
-					}else if(request.status == 404){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-404"])
-					}else if(request.status == 405){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-405"])
-					}else if(request.status == 406){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-406"])
-					}else if(request.status == 408){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-408"])
-					}else if(request.status == 500){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-500"])
-					}else if(request.status == 502){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-502"])
-					}else if(request.status == 504){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-504"])
 					}
 				}
 			}
@@ -853,7 +832,22 @@ Chat.createAPIv2 = function(config) {
 			request.open("POST", url);
 			request.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
 			request.onerror = function() {
-				me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-401"]);
+				if(request.status == 0)
+				{	
+					if(wgLanguage == "TH")
+					{
+					onMessageAlert(dataMessageTH["Error-408"]);
+					}
+					else if(wgLanguage == "EN")
+					{
+					onMessageAlert(dataMessageEN["Error-408"]);
+					}
+				}
+				else
+				{
+					me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-401"]);
+				}						
+				console.log(request.status);		
 			}
 			request.onreadystatechange = function() {
 				if(request.readyState == 4){ 
@@ -863,32 +857,6 @@ Chat.createAPIv2 = function(config) {
 							console.log("readReceipt response -> "+JSON.stringify(request.responseText));
 						}
 						var oo = JSON.parse(request.responseText);
-					}else if(request.status == 102){
-					me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-102"]);
-					}else if(request.status == 103){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-103"]);
-					}else if(request.status == 161){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-161"]);
-					}else if(request.status == 204){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-204"]);
-					}else if(request.status == 401){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-401"]);
-					}else if(request.status == 403){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-403"])
-					}else if(request.status == 404){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-404"])
-					}else if(request.status == 405){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-405"])
-					}else if(request.status == 406){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-406"])
-					}else if(request.status == 408){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-408"])
-					}else if(request.status == 500){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-500"])
-					}else if(request.status == 502){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-502"])
-					}else if(request.status == 504){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-504"])
 					}
 				}
 			}
@@ -907,7 +875,22 @@ Chat.createAPIv2 = function(config) {
 			request.open("POST", url);
 			request.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
 			request.onerror = function() {
-				me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-401"]);
+				if(request.status == 0)
+				{	
+					if(wgLanguage == "TH")
+					{
+					onMessageAlert(dataMessageTH["Error-408"]);
+					}
+					else if(wgLanguage == "EN")
+					{
+					onMessageAlert(dataMessageEN["Error-408"]);
+					}
+				}
+				else
+				{
+					me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-401"]);
+				}						
+				console.log(request.status);		
 			}
 			request.onreadystatechange = function() {
 				if(request.readyState == 4 ){ 
@@ -916,32 +899,6 @@ Chat.createAPIv2 = function(config) {
 							console.log("pushUrl response -> "+JSON.stringify(request.responseText));
 						}
 						var oo = JSON.parse(request.responseText);
-					}else if(request.status == 102){
-					me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-102"]);
-					}else if(request.status == 103){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-103"]);
-					}else if(request.status == 161){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-161"]);
-					}else if(request.status == 204){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-204"]);
-					}else if(request.status == 401){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-401"]);
-					}else if(request.status == 403){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-403"])
-					}else if(request.status == 404){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-404"])
-					}else if(request.status == 405){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-405"])
-					}else if(request.status == 406){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-406"])
-					}else if(request.status == 408){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-408"])
-					}else if(request.status == 500){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-500"])
-					}else if(request.status == 502){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-502"])
-					}else if(request.status == 504){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-504"])
 					}
 				}
 			}
@@ -963,7 +920,22 @@ Chat.createAPIv2 = function(config) {
 			request.open("POST", url);
 			request.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
 			request.onerror = function() {
-				me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-401"]);
+				if(request.status == 0)
+				{	
+					if(wgLanguage == "TH")
+					{
+					onMessageAlert(dataMessageTH["Error-408"]);
+					}
+					else if(wgLanguage == "EN")
+					{
+					onMessageAlert(dataMessageEN["Error-408"]);
+					}
+				}
+				else
+				{
+					me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-401"]);
+				}						
+				console.log(request.status);		
 			}
 			request.onreadystatechange = function() {
 				if(request.readyState == 4){ 
@@ -972,37 +944,37 @@ Chat.createAPIv2 = function(config) {
 							console.log("updateData response -> "+JSON.stringify(request.responseText));
 						}
 						var oo = JSON.parse(request.responseText);
-					}else if(request.status == 102){
-					me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-102"]);
-					}else if(request.status == 103){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-103"]);
-					}else if(request.status == 161){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-161"]);
-					}else if(request.status == 204){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-204"]);
-					}else if(request.status == 401){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-401"]);
-					}else if(request.status == 403){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-403"])
-					}else if(request.status == 404){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-404"])
-					}else if(request.status == 405){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-405"])
-					}else if(request.status == 406){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-406"])
-					}else if(request.status == 408){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-408"])
-					}else if(request.status == 500){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-500"])
-					}else if(request.status == 502){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-502"])
-					}else if(request.status == 504){
-						me._config.onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-504"])
 					}
 				}
 			}
 			request.send(params);
         }
+		
+		// //send email
+		// startChat: function(formchat) {
+			// var me = this;
+			
+				// var url = me._config.baseURL + '/chat/' + me._config.chatServiceName;
+				// const request = new XMLHttpRequest();
+				// //request.responseType = "json";
+				// request.open("POST", url,true);
+				// request.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+				// request.onerror = function() {
+	
+				// }
+				// request.onreadystatechange = function() {
+					// if(request.readyState == 4 && request.status == 200) {
+						// if ( me._config.debug === true ) {
+							// console.log("startChat responseqq -> "+JSON.stringify(request.responseText));
+						// }
+						// var oo = JSON.parse(request.responseText);
+						
+						
+					// }					
+				// }
+				// request.send(formchat);
+			// }
+        // }
 		
     });
 };

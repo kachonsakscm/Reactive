@@ -295,6 +295,7 @@ function processUserIntention(dataArr){
 			obj[keyParam[j]] = temp[j];
 		}
 		if(i!=0){
+			console.log(obj);
 			prodIntention.push(obj);
 		}
 		i++;
@@ -343,12 +344,12 @@ function processemoji(dataArr){
 function createUserIntention(pi){
 	var styleProdIntention  = "<div class='dv-generic-carousel'>"
 							+ "	<div id='prev-re' class='sd sd-left'>"
-							//+ "		<img src='"+wgServer+"/"+wgImagePath+"/btn-left.png"'>"
-							+ "		<i class='fa fa-angle-left fa-lg'></i>"
+							+ "	<img src='"+wgServer+"/"+wgImagePath+"/btn-left.png'>"
+							//+ "		<i class='fa fa-angle-left fa-lg'></i>"
 							+ "	</div>"	
 							+ "	<div id='next-re'  class='sd sd-right'>"
-							//+ "		<img src='"+wgServer+"/"+wgImagePath+"/btn-right.png"'>"
-							+ "		<i class='fa fa-angle-right fa-lg'></i>"
+							+ "		<img src='"+wgServer+"/"+wgImagePath+"/btn-right.png'>"
+							//+ "<i class='fa fa-angle-right fa-lg'></i>"
 							+ "	</div>"
 							+ " <ul class='ul-gc'>"
 							;
@@ -461,7 +462,6 @@ function srvTime(){
 		
 		return iswork;
 	}
-
 	function bulActive(n){
   
 		var x = ($('.ul-gc').width()*n);
@@ -482,69 +482,112 @@ function srvTime(){
 		console.log("bul : "+bul)
 	}
 
-	function createEmail(msgFrom){
-		wgDateMessage = createWgDateMessage();
-		var subtext = $("input[name=Subject]").val();
-		//var subtext = $("input[name=Subject]").val();
-		var listChat  = wgAction.createElement(tagList);
-		listChat.id   = tagList + "-btn-sms";
-		
-		var template = "<div class='"+msgFrom["headclass"]+"'>";
-		if(msgFrom["position"] == "right"){
-			template+= "	<span class='"+msgFrom["timeclass"]+"'>"+wgDateMessage+"</span>"
-					+  "	<span class='"+msgFrom["headnameclass"]+"'>"+msgFrom["name"]+"</span>"
-					;
-		} 
-		else{
-			template+= "	<img src='"+msgFrom["img"]+"'>"
-					+  "	<span class='"+msgFrom["headnameclass"]+"'>"+msgFrom["name"]+"</span>"
-					+  "	<span class='"+msgFrom["timeclass"]+"'>"+wgDateMessage+"</span>"
-					;
-		}
-		template += "</div>"
-				 + "<div class='messagesms'><div class='exit' onclick='closeForm(end)'>X</div>"
-				 
-				 + "<center><span class='txtemail'>"+wgSystem[wgLanguage]["messageresponse"]["HeadEmail"]+"</span></center><br><span class='txtemail'>"+wgSystem[wgLanguage]["messageresponse"]["Email"]+"</span><br><input  id='email' type='text' name='textemail' class='txtboxemail' placeholder='"+wgSystem[wgLanguage]["messageresponse"]["AskEmailBox"]+"' title='' maxlength='10' required /><br>"
-				 + "<br><span class='txtemail'>"+wgSystem[wgLanguage]["messageresponse"]["ESubject"]+"<br></span><input  id='emailsubject' type='text' name='textemailsubject' class='txtboxemail' value='"+subtext+"' title='' maxlength='10' required /><br>"
-				 // + "<br><span class='txtemail'>"+wgSystem[wgLanguage]["messageresponse"]["EProduct"]+"<br></span><input  id='emailproduct' type='text' name='textemailproduct' class='txtboxemail' placeholder='"+wgSystem[wgLanguage]["messageresponse"]["AskEmailProductBox"]+"' title='' maxlength='10' required /><br><br><br>"
-				 +"<br><span class='txtemail'>"+wgSystem[wgLanguage]["messageresponse"]["EProduct"]+"<br></span><select name='cars' class='txtboxemail'><option value=''>"+wgSystem[wgLanguage]["messageresponse"]["AskEmailProductBox"]+"</option>"
-				 +"<option value='saab'>Saab</option>"
-				 +"<option value='fiat'>Fiat</option>"
-				 +"<option value='audi'>Audi</option>"
-				 +"</select>"
-				 + "<input type='file' id='uploadfile1' onchange='attach(this.files);' style='display:none;'/>"
-				 + "<center><div class='attachemail' onclick=$('#uploadfile1').click(); >"
-				 + "<img src='"+wgServer+"/"+wgImagePath+"/attach.png' id='uploadfile' class='imgfile' style='cursor:pointer;' width='13' height='13'>&nbsp;Attach file</div> </center>"
-				 + "</div>"
-				 + "<center><button type='button' class='btn-sms' id='btn-SmsN' value='cencel' onclick='closeForm(this.value);' >"+wgSystem[wgLanguage]["messageresponse"]["btn_cancel"]+"</button><button type='button' class='btn-sms' id='btn-SmsY' onclick='submitSms() ;' >"+wgSystem[wgLanguage]["messageresponse"]["SmsY"]+"</button></center>"
-				 ;
-		//console.log("test sms : "+msgText);
-		listChat.innerHTML = template;				   
-		wgAction.getElementById(wgUlChatId).appendChild(listChat);
-		focusScrollwgChatbox();
-		//document.getElementById("btn-SmsY").disabled = true;
+function createEmail(msgFrom){
+	console.log(msgFrom);
+	console.log(listproduct[1]["value"]);
+	wgDateMessage = createWgDateMessage();
+	var subtext = $("input[name=Subject]").val();
+	//var subtext = $("input[name=Subject]").val();
+	var protext = $("input[id=Product]").val();
+	var listChat  = wgAction.createElement(tagList);
+	listChat.id   = tagList + "-btn-sms";
+	
+	var template = "<div class='"+msgFrom["headclass"]+"'>";
+	if(msgFrom["position"] == "right"){
+		template+= "	<span class='"+msgFrom["timeclass"]+"'>"+wgDateMessage+"</span>"
+				+  "	<span class='"+msgFrom["headnameclass"]+"'>"+msgFrom["name"]+"</span>"
+				;
+	} 
+	else{
+		template+= "	<img src='"+msgFrom["img"]+"'>"
+				+  "	<span class='"+msgFrom["headnameclass"]+"'>"+msgFrom["name"]+"</span>"
+				+  "	<span class='"+msgFrom["timeclass"]+"'>"+wgDateMessage+"</span>"
+				;
+	}
+	template += "</div>"
+			 + "<div class='messagesms'><div class='exit' onclick='closeForm('email')'>X</div>"
+			 
+			 + "<center><span class='txtemail'>"+wgSystem[wgLanguage]["messageresponse"]["HeadEmail"]+"</span></center><br><span class='txtemail'>"+wgSystem[wgLanguage]["messageresponse"]["Email"]+"</span><br><input  id='email' type='text' name='textemail' class='txtboxemail' placeholder='"+wgSystem[wgLanguage]["messageresponse"]["AskEmailBox"]+"' title='' maxlength='10' required /><br>"
+			 + "<br><span class='txtemail'>"+wgSystem[wgLanguage]["messageresponse"]["ESubject"]+"<br></span><input  id='emailsubject' type='text' name='textemailsubject' class='txtboxemail' value='"+subtext+"' title='' maxlength='10' required /><br>"
+			 // + "<br><span class='txtemail'>"+wgSystem[wgLanguage]["messageresponse"]["EProduct"]+"<br></span><input  id='emailproduct' type='text' name='textemailproduct' class='txtboxemail' placeholder='"+wgSystem[wgLanguage]["messageresponse"]["AskEmailProductBox"]+"' title='' maxlength='10' required /><br><br><br>"
+			 +"<br><span class='txtemail'>"+wgSystem[wgLanguage]["messageresponse"]["EProduct"]+"<br></span><select name='textemailproductsubject' class='txtboxemail'><option value=''>"+wgSystem[wgLanguage]["messageresponse"]["AskEmailServicenumber"]+"</option>";
+			 for(var k=0;k<listproduct.length;k++){
+				template += "<option value='"+listproduct[k]["value"]+"'>"+listproduct[k]["value"]+"</option>"
+			}
+			template += "</select><br>"
+			 + "<br><span class='txtemail'>"+wgSystem[wgLanguage]["messageresponse"]["EServicenumber"]+"<br></span><input  id='emailservicenumber' type='text' name='textemailservicenumber' class='txtboxemail' placeholder='"+wgSystem[wgLanguage]["messageresponse"]["AskEmailServicenumber"]+"' title='' maxlength='10' required /><br>"
+			 + "<input type='file' id='uploadfile1' onchange='attach(this.files);' style='display:none;'/>"
+			 + "<center><div class='attachemail' onclick=$('#uploadfile1').click(); >"
+			 + "<img src='"+wgServer+"/"+wgImagePath+"/attach.png' id='uploadfile' class='imgfile' style='cursor:pointer;' width='13' height='13'>&nbsp;"+wgSystem[wgLanguage]["messageresponse"]["EAttachment"]+"</div> </center>"
+			 + "<span class='txtemail'>"+wgSystem[wgLanguage]["messageresponse"]["EDescriotion"]+"<br></span><textarea class='txtboxemail' "
+			 +"placeholder='"+wgSystem[wgLanguage]["messageresponse"]["AskEmailDescriotion"]+"'  id='emaildescription'name='textemaildescription'rows='3'></textarea><br><br>"
+			 + "</div>"
+			 + "<center><button type='button' class='btn-sms' id='btn-SmsN' value='cencel' onclick='closeForm(this.value);' >"+wgSystem[wgLanguage]["messageresponse"]["btn_cancel"]+"</button><button type='button' class='btn-sms' id='btn-SmsY' onclick='sendemail() ;' >"+wgSystem[wgLanguage]["messageresponse"]["SmsY"]+"</button></center>"
+			 ;
+	//console.log("test sms : "+msgText);
+	listChat.innerHTML = template;				   
+	wgAction.getElementById(wgUlChatId).appendChild(listChat);
+	focusScrollwgChatbox();
+	//document.getElementById("btn-SmsY").disabled = true;
 			
 	
-	}
+}
 
+function createfileattach(fileattach){ 
+	console.log(fileattach);
+	// filelist.splice(filelist.length, 0,fileattach);
+	var numfile = filelist.length;
+	// var returnedTarget = Object.assign(filelist, fileattach);
+	 filelist.push.apply(filelist,fileattach);
+	// console.log(returnedTarget);
+	console.log(filelist);
+	console.log($("#fileemail").val());
 	
+	console.log(numfile);
+	for(var i=0;i<fileattach.length;i++)
+	{
+		$(".messagesms").append("<div class='filemail' id='filemail["+numfile+"]'><div class='exitmail' onclick='deletefile("+numfile+")'>X</div>"+fileattach[i]["name"]+" </div>");
+		numfile++;
+		console.log(numfile);
+	}
+	focusScrollwgChatbox();
+		 console.log(filelist);
+		 filesendmail = [];
+		for(var k=0;k<filelist.length;k++)
+		{
+			handleFileSelect(filelist,k);
+		}
+}
+
+function refileattach(filere){ 
+	
+	for(var j=0;j<filere.length;j++)
+	{
+		$(".messagesms").append("<div class='filemail' id='filemail["+j+"]'><div class='exitmail' onclick='deletefile("+j+")'>X</div>"+filere[j]["name"]+" </div>");
+	}
+	focusScrollwgChatbox();
+	console.log(filelist);
+		// console.log(filelist[i][i]["name"]);
+
+}
+
 $(document).on('click touchend ','#prev-re', function(e) { console.log($('.ul-gc').width());$('.ul-gc').animate({scrollLeft: "-="+$('.ul-gc').width()}, 500, 'swing');if(bul>0){buletActive(bul-1);}});
-$(document).on('click touchend','#next-re',     function() { console.log($('.ul-gc').width());$('.ul-gc').animate({scrollLeft: "+="+$('.ul-gc').width()}, 500, 'swing');if(bul>=0){buletActive(bul+1);}});
+$(document).on('click touchend','#next-re',     function() {console.log($(".bul-img").length); console.log($('.ul-gc').width());$('.ul-gc').animate({scrollLeft: "+="+$('.ul-gc').width()}, 500, 'swing');if(bul>=0 && bul < $(".bul-img").length-1 ){buletActive(bul+1);}});
 $(document).on('click','.dv-button-re',function() { selectProductService(this.id,$(this).text()); });
-$(document).on('click touchend','.emoji-option',function(e) { 
+$(document).on('click touchend','.emoji-option-re',function(e) { 
 		selectEmoji(this.id,$(this).text()); 
 		clickemoji();
 		console.log($(this).text());	
 });
-$(document).on('click','.chat-history','.dv-button-re',function() { document.getElementById("emoji-chat").style.display = "none";
+$(document).on('click','#chat-history-re','.dv-button-re',function() { document.getElementById("emoji-chat-re").style.display = "none";
 click=false; });
  $(document).on('click','input[name=textsms]',function (e) {
   clearTimeout(SmsTime);       
   SmsTime = setTimeout(function() { 
-		document.getElementById('li6').parentNode.removeChild(document.getElementById('li6'));
-		for(var j=0;j<SplashMes.length;j++){		
-			createMessage(wgMsgMariload,SplashMes[j]);					
-		}		
+		document.getElementById('li-btn-sms').parentNode.removeChild(document.getElementById('li-btn-sms'));
+		// for(var j=0;j<SplashMes.length;j++){		
+			createMessage(wgMsgMariload,SplashMes[0]);					
+		// }		
 		isewt = false;		
 		clearTimeout(timeselecter); }, timeSms);
 	});
