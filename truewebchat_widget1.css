@@ -183,6 +183,7 @@
 }
 .wgChatbox-head .span1 .span1-1 img{
 	width:100%;
+	border-radius: 50%;
 }
 
 .wgChatbox-head .span2{
@@ -749,6 +750,8 @@ button.btn-sms:hover{
  font-family: 'TrueMedium';
  width:100%;
  border: 0.063em solid #b9c1c9;
+ resize: none;
+ outline: none;
 }
 .txtemail{
 	font-size:0.8em;
@@ -759,6 +762,24 @@ button.btn-sms:hover{
  margin-top: 0.3em;
     /* margin-bottom: 0.3em; */
 }
+
+.exitmail{
+	margin-left: 100%;
+    font-family: TrueMedium;
+    color: red;
+    cursor: pointer;
+    margin-bottom: -7%;
+}
+
+.filemail{
+	border: solid 0.075em #f93e60;
+    border-radius: 1.3em;
+    padding: 0.425em;
+    font-size: 0.7em;
+	margin-top: 1%;
+	padding-right: 6%;
+}
+
 /* .selec:hover{ */
 	
 	/* color:inherit; */

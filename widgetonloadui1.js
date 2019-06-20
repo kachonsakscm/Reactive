@@ -14,12 +14,30 @@
 	var SmsTime;
 	var firstmessage = true;
 	var chanelselect = true;
+	var valcookie = {};
 	
-	window.onload = function() {
-	getpara();		
+	
+	window.onload = function() {	
+	
+		var listChat  = wgAction.createElement(tagDiv);
+		listChat.id   = "listfileemail";	
+		var template = ""
+					 + "<input type='hidden' class='fileemail' "
+					 + "id='fileemail' name='fileemail' />"
+					 + ""
+					 ;
+		listChat.innerHTML = template;
+		// console.log(wgAction.getElementById(wgUlChatId).appendChild(listChat));
+		wgAction.getElementById(wgUlChatId).appendChild(listChat);   
+		$(".Livere").fadeIn();		
+		
+		if($('.gcb-startCobrowse'))
+		{
+			//console.log($('.gcb-startCobrowse'));
+			$('.gcb-startCobrowse').css('display', 'none');
+		}
 		document.getElementById("formchat").style.display = "none";
-		// $("#formchat").fadeIn();
-		$(".Live").fadeIn();
+		//document.getElementById("formchat").style.display = "none";
 		for(var i=0;i<wgScript.length;i++){
 			var oScript = wgScript[i],oTag;
 			if(wgAction.getElementById(oScript.id)) return;
@@ -31,14 +49,110 @@
 			}
 			wgAction.head.appendChild(oTag);	
 		}
-		
+		getpara();
 		setTimeout(function(){
 			readConfig(wgLanguage);
 			processemoji(emoji);
+			checkCookie();	
+			submitername = $("input[id=SubmitterSourceName]").val();
 		},timeReadCsv);
 			
 				
 	}
+	
+	function ClearCookie() {	
+			console.log("เข้าClearCookie");
+		  var d = new Date();		
+		  var b = new Date();		
+		  d.setTime(d.getTime());		
+		  b.setTime(b.getTime() );		
+		  var expires = "expires=" + d.toGMTString();	
+			console.log(expires);
+		  var expiresb = "expires=" + b.toGMTString();		
+		  console.log("expires : "+expires);		
+		  console.log("expiresb : "+expiresb);		
+		  document.cookie[6] = "";
+		console.log("expires : "+document.cookie[6]);			  
+	}		
+			
+	function setCookie(cname,cvalue,exdays) {		
+		  var d = new Date();		
+		  var b = new Date();		
+		  d.setTime(d.getTime() + (exdays*24*60*60*1000));		
+		  b.setTime(b.getTime() );		
+		  var expires = "expires=" + d.toGMTString();		
+		  var expiresb = "expires=" + b.toGMTString();		
+		  console.log("expires : "+expires);		
+		  console.log("expiresb : "+expiresb);		
+		  document.cookie = "UserId" + "=" + UserId + "," +"ChatId" + "=" + ChatId + "," +"SecureKey" + "=" + SecureKey+ "," +"Alias" + "=" + Alias + "," +"TranscriptPosition" + "=" + TranscriptPosition + "," +"SumiterSouceName" + "=" + submitername +"," +cname + "=" + cvalue + ";" + expires + ";path=/";		
+	}		
+	function getCookie(cname) {		
+		  var name = cname + "=";		
+		  // console.log("name : "+name);		
+		  var decodedCookie = decodeURIComponent(document.cookie);		
+		  var ca = decodedCookie.split(';');		
+		  console.log(ca);		
+		  var c = "";		
+		  for(var i = 0; i < ca.length; i++) {		
+			  // console.log(ca[5]);		
+			   // console.log("ca["+i+"] :"+ca[i].search("UserId"));		
+			  if(ca[i].search("UserId")>=0)		
+			  {		
+				  c = ca[i];		
+				  c = c.substring(0);		
+			  }		
+			// while (c.charAt(0) == ' ') {		
+			  // c = c.substring(1);		
+			  // console.log(c);		
+			// }		
+			if (c.indexOf(name) == 0) {		
+				console.log(c.substring(name.length, c.length));		
+			  return c.substring(name.length, c.length);		
+			}		
+	}		
+		  if(c.search("UserId") >= 0)		
+		  {		
+			  console.log("C : "+c);		
+			  return c;		
+		  }else		
+		  {			
+			  console.log("C : ");		
+			  return "";		
+		  }		
+		  		
+		}		
+	function checkCookie() {		
+		  user=getCookie("username");		
+		   console.log("user1 : "+user);		
+				console.log("user.search : "+user.search("ChatCookie"));	
+		    if (user.search("ChatCookie") >= 0) {		
+				user = user.split(',');		
+				console.log("usersplit : "+user);		
+				for(var j=0;j<user.length; j++)		
+				{		
+					var mark = 0;		
+					mark = user[j].search("=");		
+					// console.log("mark : "+mark);		
+					console.log(user[j].substring(mark+1));		
+					valcookie[j]=user[j].substring(mark+1);		
+				}		
+						
+				UserId = valcookie[0];		
+				ChatId = valcookie[1] ;		
+				SecureKey = valcookie[2] ;		
+				Alias = valcookie[3] ;		
+				TranscriptPosition = valcookie[4] ;		
+				chat = "ChatCookie";	
+				oChatStart = true;				
+				openForm();		
+			}
+			else {		
+				 // user = "ChatCookie";		
+				 // console.log("user2 : "+user);		
+				 // setCookie("username", user, 0.00105);		
+			 }		
+	}		
+	
 	
 	function getpara(){
 		var url=decodeURIComponent(window.location.href).replace( /\+/g, ' ' );
@@ -49,6 +163,20 @@
 			var temp = e.split("=");
 			paramUrl[temp[0]] = temp[1]; 
 			}); 
+		}
+		console.log(paramUrl['Cobrowse']);
+		console.log(paramUrl);
+		if(paramUrl['Cobrowse'] != "")
+		{
+			
+			// var channel = "";
+			// channel = $("input[id=SubmitterSourceName]").val();
+			if(paramUrl['Cobrowse'] == "true")
+			{
+				console.log("yes");
+				$(".gcb-startCobrowse").click();
+			}
+			
 		}
 		langweb  = paramUrl["ln"];
 		if(langweb != null)
@@ -70,6 +198,16 @@
 		//readWgFunction();
 	}
 	function openForm(){
+		
+		$("#messagechat").prop('name', 'messagechat-re');		
+		$(".emoji-chat").prop('id', 'emoji-chat-re');		
+		$(".emoji-option").prop('class', 'emoji-option-re');		
+		$(".chat-history").prop("id","chat-history-re");		
+		$(".span3-1").attr("onclick","closeForm('end')");		
+		$("#btn-emoji").attr("onclick","clickemoji()");		
+		$("#btn-end").attr("onclick","endChat()");		
+		$("#btn-Send").attr("onclick","sendMsg()");		
+		$("#uploadfile").attr("onchange","attach(this.files)");
 		console.log(isIE);
 		if(isIE)
 		{
@@ -93,15 +231,23 @@
 		 console.log(emoji);		
 		document.getElementById("messagechat").placeholder = wgSystem[wgLanguage]["messageresponse"]["Textsent"];
 		$("#"+wgChatboxId).removeClass("hide");
-		createMessage(wgMsgMari,wgSystem[wgLanguage]["messageresponse"]["Greeting"]);
-		if(wgLanguage == 'TH')
+		
+		if(chat != "ChatCookie")
 		{
-			createBtnInChat(wgBtnEng);
-			timeEng = setTimeout(function(){ afterSelectLanguage();}, timeoutEng);
-		}
-		else
+			createMessage(wgMsgMari,wgSystem[wgLanguage]["messageresponse"]["Greeting"]);
+			if(wgLanguage == 'TH')
+			{
+				createBtnInChat(wgBtnEng);
+				timeEng = setTimeout(function(){ afterSelectLanguage();}, timeoutEng);
+			}
+			else
+			{
+				 afterSelectLanguage();
+			}
+			 //openemail() ;
+		}else if(chat == "ChatCookie")
 		{
-			 afterSelectLanguage();
+			requestChat();
 		}
 	}
 	
@@ -148,8 +294,12 @@
 			openConfirmEnd(data);
 		} else{
 			clearChatbox();
-			document.getElementById("emoji-chat").style.display = "none";
+			document.getElementById("emoji-chat-re").style.display = "none";
+			$("#messagechat").prop('name', 'messagechat');		
+			$(".emoji-option-re").prop('class', 'emoji-option');		
+			$("#emoji-chat-re").prop('id', 'emoji-chat');
 			click=false;
+			clearTimeout(timeEng);
 		}
 	}
 	
@@ -168,11 +318,11 @@
 	
 	function clickemoji(){
 		if(click == false){
-			document.getElementById("emoji-chat").style.display = "block";
+			document.getElementById("emoji-chat-re").style.display = "block";
 			click=true;
 		}
 		else{
-			document.getElementById("emoji-chat").style.display = "none";
+			document.getElementById("emoji-chat-re").style.display = "none";
 			click=false;
 		}
 		
@@ -192,6 +342,12 @@
 			$('#btn-end').show();
 			//$('#btn-cancel').show();
 			$('#btn-cancel').css('display', 'inline-block');
+			
+		}
+		else if(data == "email"){
+			$('.comfirm-end-inside span').text(dataMessage["EmailChatEnd"]);	
+			$('.comfirm-end-inside button[name="btn-cancel"]').text("Cancel");
+			$('.comfirm-end-inside button[name="btn-email"]').text("Send Email");
 			
 		}
 		else {
@@ -255,8 +411,8 @@
 		clearTimeout(timeEng);
 		removeBtnInChat(wgBtnEng["id"]);
 		//afterSelectLanguage();
-		var text = $('textarea[name=messagechat]').val().replace(/\n/g, "");
-		$('textarea[name=messagechat]').val("");
+		var text = $('textarea[name=messagechat-re]').val().replace(/\n/g, "");
+		$('textarea[name=messagechat-re]').val("");
 		if(text.trim() == ""){
 			return false;
 		}
@@ -330,7 +486,8 @@
 	
 	
 	function selectProductService(pin,txt){
-		console.log(selecInten);
+		console.log(pin);
+		console.log(txt);
 		if(selecInten == false)
 		{
 			var v = pin.split("-");
@@ -349,56 +506,83 @@
 	
 	function selectEmoji(pin,txt){
 		// var x = document.getElementById("messagechat").val();
-		// var x = $("textarea[name=messagechat]").val();	
-		var x = document.getElementById("messagechat").value
-		 document.getElementById("messagechat").value = x+txt;
-		 
+		var x = $("textarea[name=messagechat-re]").val();	
+		// var x = document.getElementById("messagechat").value
+		 // document.getElementById("messagechat").value = x+txt;
+		  $("textarea[name=messagechat-re]").val(x+txt);
 		// $("#messagechat").val(x+txt);
 		// document.frmMain.messagechat.focus();		
 		$("#messagechat").focus();
 	}
 
 	function requestChat(){
-		$("input[name=firstName]").val(isBlankSetAnonymous($('input[name=firstName]').val()));
-		$("input[name=lastName]").val(isBlankSetAnonymous($('input[name=lastName]').val()));
-		var formchat = $('#formchat').serialize();
-		oChat = new ChatFactory({
-			baseURL: "https://galb.truecorp.co.th", 
-			<!-- chatServiceName: "gms-chat", -->
-			<!--baseURL: "https://172.30.181.15:8443",-->
-			chatServiceName: "gms-chat",
-			useCometD: false,
-			verbose: true,
-			debug:true,
-			onStarted: onStarted,
-			onEnded: onEnded,
-			<!-- onFileSent: onFileSent, -->
-			onMessageReceived: onMessageReceived,
-			onFileReceived: onFileReceived,
-			onError: onError,
-			onDownloadFile:onDownloadFile,
-			onDownloadFileIE:onDownloadFileIE,
-			onMessageAlert:onMessageAlert
-		});
-		// Start the chat using the variable in form.
-		oChat.startChat(formchat);
-		console.log(formchat);
-		createMessage(wgMsgMari,wgSystem[wgLanguage]["messageresponse"]["ChatStarted"]);
-		console.log("ยังไม่ส่งข้อความแรก");
-		console.log(firstmessage);
-		setTimeout(function(){
-			if(firstmessage == true)
+		if(chat != "ChatCookie")
 		{
-			console.log("เข้าข้อความแรก");
-			console.log($("input[name=Subject]").val());
-			oChat.sendMessage($("input[name=Subject]").val());
-			
+			$("input[name=firstName]").val(isBlankSetAnonymous($('input[name=firstName]').val()));
+			$("input[name=lastName]").val(isBlankSetAnonymous($('input[name=lastName]').val()));
+			$("input[id=SubmitterSourceName]").val(submitername);
+			var formchat = $('#formchat').serialize();
+			oChat = new ChatFactory({
+				baseURL: "https://galb.truecorp.co.th",   //Production URL
+				<!--baseURL: "https://galb-dev.truecorp.co.th",-->	//DEV URL
+				<!--baseURL: "https://172.16.56.134:8443",-->	//UAT URL
+				chatServiceName: "gms-chat",
+				useCometD: false,
+				verbose: true,
+				debug:true,
+				onStarted: onStarted,
+				onEnded: onEnded,
+				<!-- onFileSent: onFileSent, -->
+				onMessageReceived: onMessageReceived,
+				onFileReceived: onFileReceived,
+				onError: onError,
+				onDownloadFile:onDownloadFile,
+				onDownloadFileIE:onDownloadFileIE,
+				onMessageAlert:onMessageAlert
+			});
+			// Start the chat using the variable in form.
+			oChat.startChat(formchat);
+			console.log(formchat);
+			createMessage(wgMsgMari,wgSystem[wgLanguage]["messageresponse"]["ChatStarted"]);
+			console.log("ยังไม่ส่งข้อความแรก");
+			console.log(firstmessage);
+			setTimeout(function(){
+				if(firstmessage == true)
+			{
+				console.log("เข้าข้อความแรก");
+				console.log($("input[name=Subject]").val());
+				oChat.sendMessage($("input[name=Subject]").val());
+				
+			}
+			}, 2000);  
+		}else if(chat == "ChatCookie")
+		{
+			console.log("มันเข้าcookieนะ");
+			var formchat = "ChatCookie";
+			oChat = new ChatFactory({
+				baseURL: "https://galb.truecorp.co.th", 
+				<!--baseURL: "https://172.30.181.15:8443",-->	//DEV URL
+				<!--baseURL: "https://172.16.56.134:8443",-->	//UAT URL
+				chatServiceName: "gms-chat",
+				useCometD: false,
+				verbose: true,
+				debug:true,
+				onStarted: onStarted,
+				onEnded: onEnded,
+				<!-- onFileSent: onFileSent, -->
+				onMessageReceived: onMessageReceived,
+				onFileReceived: onFileReceived,
+				onError: onError,
+				onDownloadFile:onDownloadFile,
+				onDownloadFileIE:onDownloadFileIE,
+				onMessageAlert:onMessageAlert
+			});
+			// Start the chat using the variable in form.
+			oChat.startChat(formchat);
 		}
-		}, 2000);  
-		
-		// $('textarea[name=messagechat]').val($("input[name=Subject]").val());
-		// console.log("test subject : "+$('textarea[name=messagechat]').val());
-		// var text = $('textarea[name=messagechat]').val();
+		// $('textarea[name=messagechat-re]').val($("input[name=Subject]").val());
+		// console.log("test subject : "+$('textarea[name=messagechat-re]').val());
+		// var text = $('textarea[name=messagechat-re]').val();
 		// console.log("test text subject : "+text);
 		// oChat.sendMessage(text);
 		// firstmessage = true;
@@ -420,7 +604,11 @@
   function onMessageReceived(typeFrom,typeMsg,nickname,textMsg,chatend) {
 		
 		var msg = "";
-		
+		console.log(typeFrom);
+		console.log(typeMsg);
+		console.log(nickname);
+		console.log(textMsg);
+		console.log(chatend);
 		if ( typeMsg === 'Message' || typeMsg === 'Message.Text' ) {
 			var n = textMsg.search("http");
 			console.log("N : "+n);
@@ -471,6 +659,10 @@
 		} else if ( typeMsg === 'ParticipantJoined' || typeMsg === 'Notice.Joined') {
 			msg = wgSystem[wgLanguage]["messageresponse"]["Joinedchat"];
 			$('#uploadfile').prop('disabled', false);
+			if($('.gcb-startCobrowse'))
+		{
+			$('.gcb-startCobrowse').css('display', 'block');
+		}
 		} else if ( typeMsg === 'ParticipantLeft' || typeMsg === 'Notice.Left') {
 			msg = wgSystem[wgLanguage]["messageresponse"]["Leftchat"];
 		} else if ( typeMsg === 'PushUrl' || typeMsg === 'PushUrl.Text' ) {
@@ -513,7 +705,9 @@
 				 }
 			
 		} else if(typeFrom === "Agent"){
-			if(msg == wgSystem[wgLanguage]["messageresponse"]["Leftchat"] && chatend == true){
+			console.log("เอเจ้น");
+			if(msg == wgSystem[wgLanguage]["messageresponse"]["Leftchat"] || chatend == true){
+				console.log("เข้าออกจากระบบ");
 				removeTyping();
 				$('#btn-Send').prop('disabled', true);
 				$('#uploadfile').prop('disabled', true);
@@ -521,6 +715,8 @@
 				document.getElementById("btn-emoji").disabled = true;
 				$('#messagechat').prop('disabled', true);
 				createMessage(wgMsgAgent,msg);
+				// ClearCookie();
+				setCookie("username", user, 0.00001);
 				return;
 				
 			}
@@ -528,7 +724,7 @@
 			{	console.log("isewt : "+isewt);
 				console.log("เข้าewtเงื่อนไข");
 				clearTimeout(timeselecter);
-				if($("#li-btn-selecter")&& chanelselect == true )
+				if(document.getElementById('li-btn-selecter') != null && chanelselect == true )
 				{
 					document.getElementById('li-btn-selecter').parentNode.removeChild(document.getElementById('li-btn-selecter'));
 					createMessage(wgMsgAgent,msg);
@@ -537,7 +733,9 @@
 				}else if($("#li-btn-sms") && isewt && chanelselect == false){
 					console.log("เข้าทุกเงื่อนไข");
 					clearTimeout(SmsTime);
+					if(document.getElementById('li-btn-sms') != null){
 					document.getElementById('li-btn-sms').parentNode.removeChild(document.getElementById('li-btn-sms'));	
+					}
 					createMessage(wgMsgAgent,msg);
 					isewt = false;
 					
@@ -546,22 +744,29 @@
 			
 			else if(msg != wgSystem[wgLanguage]["messageresponse"]["Leftchat"] && chatend == false)
 			{
+				console.log("เคสปกติ");
 				removeTyping();
 				createMessage(wgMsgAgent,msg);
 			}
 			// $('#li-btn-selecter').empty();
 			
-		} else if(typeFrom === "External"){
+		} else if(typeFrom == "External"){
 			
 			if(msg.search("VQ_")>=0)
 			{	var obj= {};
+				var obja ={};
 				obj = msg.split(",");
+				
 				console.log("EWT : "+obj[1]);
 				 if(obj[1] > ewttime)   //ewttime
 				 {
 					timefilter(msg);
 					isewt = true;
 				 }
+				obja = msg.split("_");
+				$("#Product").val(obja[3]);
+				$("#user_intent").val(obja[4]);
+				console.log("obj : "+obj);
 			}else if(msg == wgSystem[wgLanguage]["messageresponse"]["Joinedchat"]){
 				return;
 			}else{
@@ -570,7 +775,8 @@
 					createMessage(wgMsgMariload,msg);
 				}
 				else
-				{
+				{	
+					console.log("msg : "+msg);
 					SplashMes.push(msg);
 				}
 			}
@@ -673,15 +879,27 @@
 		}
 		oChat.endChat();
 		clearChatbox();
+		// ClearCookie();
+		
 		oChatStart = false;
 		wgLanguage = "TH";
 		readConfig(wgLanguage);
-		document.getElementById("emoji-chat").style.display = "none";
+		document.getElementById("emoji-chat-re").style.display = "none";
 		click=false;
+		$("#uploadfile1").attr("onchange","attach(this.files)");	
+		$("#messagechat").prop('name', 'messagechat');		
+		$(".emoji-option-re").prop('class', 'emoji-option');		
+		$("#emoji-chat-re").prop('id', 'emoji-chat');
 		// document.getElementById("wg-emoji").innerHTML=""; 
+		if($('.gcb-startCobrowse'))
+		{
+			$('.gcb-startCobrowse').css('display', 'none');
+		}
+		setCookie("username", user, 0.00001);
+		
 	}
 	
-	$(document).on('keypress','textarea[name=messagechat]',function(e) { 
+	$(document).on('keypress','textarea[name=messagechat-re]',function(e) { 
 		if ( e.which == 13 ) {
 			
 			console.log(e.which);
@@ -714,14 +932,9 @@
 		// }
 	}
 	function openemail() {
-		// if(wgLanguage == "TH"){
-			// window.open(email+"th");
-		// }
-		// else{
-			// window.open(email+"en");
-		// }
-		// endChat();
 		createEmail(wgMsgMari,wgSystem[wgLanguage]["messageresponse"]["AskSMS"]);
+		$("#uploadfile1").attr("onchange","attachemail(this.files)");	
+		$("#uploadfile1").attr("multiple","multiple");	
 		
 	}
 	function selectq() {
@@ -732,30 +945,34 @@
 		// isewt = false;
 		createSms(wgMsgMari,wgSystem[wgLanguage]["messageresponse"]["AskSMS"]);
 		 SmsTime = setTimeout(function(){
-				//document.getElementById('li6').parentNode.removeChild(document.getElementById('li6'));
-				for(var j=0;j<SplashMes.length;j++){		
-					createMessage(wgMsgMariload,SplashMes[j]);					
-				}		
+				document.getElementById('li-btn-sms').parentNode.removeChild(document.getElementById('li-btn-sms'));
+				// for(var j=0;j<SplashMes.length;j++){		
+					createMessage(wgMsgMariload,SplashMes[0]);					
+				// }		
 						
 				clearTimeout(timeselecter);
 				
 			},timeSms);
 	}
 	
-	$(document).on('keydown','textarea[name=messagechat]',function(e) { 
+	$(document).on('keydown','textarea[name=messagechat-re]',function(e) { 
 		if(oChatStart){
 			oChat.startTypingChat();
 		}
 	});
 	
-	// $(document).on('keyup','textarea[name=messagechat]',function(e) { 
+	// $(document).on('keyup','textarea[name=messagechat-re]',function(e) { 
 		// if(oChatStart){
 			// oChat.stopTypingChat();
 		// }
 	// });
 	
 	function attach(fileup){	
+	
 		oChat.uploadfileChat(fileup);
+	}
+	function attachemail(filemail){	  
+		checkfileemail(filemail);
 	}
 	
 	function Selectewt() {
@@ -777,4 +994,115 @@
 			clearTimeout(SmsTime);
 	}
 	
+	function deletefile(numfile){
+		// filelist.pop.apply(filelist,fileattach);
+		if(filelist != null)
+		{
+			for(var j=0;j<filelist.length;j++)
+			{
+				document.getElementById('filemail['+j+']').parentNode.removeChild(document.getElementById('filemail['+j+']'));	
+			}
+		}
+		filesize = filesize-parseInt(filelist[numfile]["size"]);
+		console.log(filesize);
+		console.log(parseInt(filelist[numfile]["size"]));
+		filelist.splice(numfile, 1);
+		refileattach(filelist);
+	}
+	
+	function handleFileSelect(evt,num) {
+		console.log(evt[0]["name"]);
+	  var file = [];
+
+
+		  var f = evt[num]; // FileList object
+		  var reader = new FileReader();
+		  // Closure to capture the file information.
+		  reader.onload = (function(theFile) {
+			return function(e) {
+			  var binaryData = e.target.result;
+			  //Converting Binary Data to base 64
+			  var base64String = window.btoa(binaryData);
+			  // file["fileName"] = evt[k]["name"];
+			  // file["fileBase64"] = base64String;
+			  // filesendmail[k].fileName = "Pae";
+			  // filesendmail[k].fileBase64 = base64String;
+			  filesendmail.push({"fileName": evt[num]['name'],"fileBase64":base64String});
+			  console.log("fileName: "+evt[num]['name']+",fileBase64:"+base64String);
+			  //showing file converted to base64
+			  // document.getElementById('fileemail').value = base64String;
+			  
+			  //alert('File converted to base64 successfuly!\nCheck in Textarea');
+			};
+		  })(f);
+		  // Read in the image file as a data URL.
+		  
+		  reader.readAsBinaryString(f);
+	  // }
+	  // filesendmail.push(file);
+	  console.log(filesendmail);
+
+	}
+	
+	function checkfileemail(fmail){	 
+		var istypeFile = false;
+		var size = 0;
+		for(var l=0;l<fmail.length;l++)
+		{
+			var name = fmail[l]["name"];
+			size += parseInt(fmail[l]["size"]);
+			var ckname = fmail[l]["name"].search(/\./);	
+			
+			var ck1name = name.substring(ckname+1, name.length);
+			
+			console.log(fmail[l]["name"]);
+			console.log(ckname);
+			console.log(ck1name);
+			
+				typefile.forEach(function(x){
+					console.log(x);
+					if(ck1name.search(x) != -1){
+						istypeFile = true;
+						return;
+					}
+				});
+				
+		}
+		console.log(filesize);
+		console.log(size);
+		if(istypeFile && size <= filesizemax)
+		{	
+			filesize += size;
+			console.log(filesize);
+			createfileattach(fmail);
+		}else if(!istypeFile)
+		{
+			onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-File-Types"]);
+		}else if(size > filesizemax)
+		{
+			
+			console.log(filesize);
+			onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-Max-Total-Size"]);
+		}
+				
+				
+		
+	}
+	
+	function sendemail(){
+		var oMail = JSON.stringify({
+		// var oMail = new ChatFactory({
+		"emailDetail": {
+		"email": "pui.numbernine@gmail.com",
+		"subject": "test-mail ทดสอบ",
+		"product":"",
+		"serviceNo":"",
+		"description":"test mail test mail ทดสอบ",
+		"attachFileDetail" : filesendmail
+			}
+		});
+			console.log(oMail);
+			console.log(filelist);
+			console.log(filesendmail);
+	}
 	
