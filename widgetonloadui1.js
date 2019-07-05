@@ -430,48 +430,8 @@
 				 }
 				$("#GCTI_LanguageCode").val("");
 				requestChat();
-			} else{
-				// oChat.sendMessage(text);
-				var isUrl = false;
-				webSystax.forEach(function(x){
-					if(text.search(x) != -1){
-						isUrl = true;
-						return;
-					}
-				});
-				
-				if(isUrl){
-					console.log("test url http : "+text.search("http"));
-					if(text.search("http://") == -1){
-						text = "http://"+text;
-						
-					} 
-						//else if(text.search("https://") == -1){
-						//text = "https://"+text;
-					//}
-					console.log("test url : "+text);
-					if(text.search(" ") < text.length)
-					{
-						var url = text.substring(0, text.search(" "));
-						var subtext = text.substring(text.search(" "), text.length)
-						console.log("test url : "+url);
-						console.log("test subtext : "+subtext);
-						console.log("test text url : "+text);
-						
-						console.log("test lenght : "+text.length);
-						
-						console.log("test search : "+text.search(" "));
-						oChat.pushUrlChat(url);
-						oChat.sendMessage(subtext);
-					}
-					else
-					{
-						oChat.pushUrlChat(text);
-					}
-				} else{
-					
+			} else{			
 					oChat.sendMessage(text);
-				}
 			}
 		},timeReadCsv);
 		
