@@ -14,10 +14,10 @@ var TranscriptPosition ;
 var chat ;		
 var user;
 var wgScript = [
-	{type:"script",	id:"chatapi",		path:wgServer+"/"+"uatchatapi.js"},
-	{type:"script",	id:"wgfunction",	path:wgServer+"/"+"uatwgfunction.js"},
+	{type:"script",	id:"chatapi",		path:wgServer+"/"+"chatapi.js"},
+	{type:"script",	id:"wgfunction",	path:wgServer+"/"+"wgfunction.js"},
 	// {type:"script",	id:"sendemail",	path:wgServer+"/"+"sendemail.js"},
-	{type:"link",	id:"widgetstrue" ,	path:wgServer+"/"+"uattruewebchat_widget1.css"}
+	{type:"link",	id:"widgetstrue" ,	path:wgServer+"/"+"truewebchat_widget1.css"}
 	// {type:"script",	id:"proactivechatapi",		path:wgServer+"/"+wgProactive+"/"+"proactivechatapi.js"},
 	// {type:"script",	id:"proactivewgfunction",	path:wgServer+"/"+wgProactive+"/"+"proactivewgfunction.js"},
 	// {type:"link",	id:"proactivetruewebchat_widget1" ,	path:wgServer+"/"+wgProactive+"/"+"proactivetruewebchat_widget1.css"}

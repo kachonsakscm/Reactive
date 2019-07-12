@@ -27,13 +27,13 @@
 					 + ""
 					 ;
 		listChat.innerHTML = template;
-		// console.log(wgAction.getElementById(wgUlChatId).appendChild(listChat));
+		// //console.log(wgAction.getElementById(wgUlChatId).appendChild(listChat));
 		wgAction.getElementById(wgUlChatId).appendChild(listChat);   
 		$(".Livere").fadeIn();		
 		
 		if($('.gcb-startCobrowse'))
 		{
-			//console.log($('.gcb-startCobrowse'));
+			////console.log($('.gcb-startCobrowse'));
 			$('.gcb-startCobrowse').css('display', 'none');
 		}
 		document.getElementById("formchat").style.display = "none";
@@ -61,18 +61,18 @@
 	}
 	
 	function ClearCookie() {	
-			console.log("เข้าClearCookie");
+			//console.log("เข้าClearCookie");
 		  var d = new Date();		
 		  var b = new Date();		
 		  d.setTime(d.getTime());		
 		  b.setTime(b.getTime() );		
 		  var expires = "expires=" + d.toGMTString();	
-			console.log(expires);
+			//console.log(expires);
 		  var expiresb = "expires=" + b.toGMTString();		
-		  console.log("expires : "+expires);		
-		  console.log("expiresb : "+expiresb);		
+		  ////console.log("expires : "+expires);		
+		  //console.log("expiresb : "+expiresb);		
 		  document.cookie[6] = "";
-		console.log("expires : "+document.cookie[6]);			  
+		//console.log("expires : "+document.cookie[6]);			  
 	}		
 			
 	function setCookie(cname,cvalue,exdays) {		
@@ -82,20 +82,20 @@
 		  b.setTime(b.getTime() );		
 		  var expires = "expires=" + d.toGMTString();		
 		  var expiresb = "expires=" + b.toGMTString();		
-		  console.log("expires : "+expires);		
-		  console.log("expiresb : "+expiresb);		
+		  //console.log("expires : "+expires);		
+		  //console.log("expiresb : "+expiresb);		
 		  document.cookie = "UserId" + "=" + UserId + "," +"ChatId" + "=" + ChatId + "," +"SecureKey" + "=" + SecureKey+ "," +"Alias" + "=" + Alias + "," +"TranscriptPosition" + "=" + TranscriptPosition + "," +"SumiterSouceName" + "=" + submitername +"," +cname + "=" + cvalue + ";" + expires + ";path=/";		
 	}		
 	function getCookie(cname) {		
 		  var name = cname + "=";		
-		  // console.log("name : "+name);		
+		  // //console.log("name : "+name);		
 		  var decodedCookie = decodeURIComponent(document.cookie);		
 		  var ca = decodedCookie.split(';');		
-		  console.log(ca);		
+		  //console.log(ca);		
 		  var c = "";		
 		  for(var i = 0; i < ca.length; i++) {		
-			  // console.log(ca[5]);		
-			   // console.log("ca["+i+"] :"+ca[i].search("UserId"));		
+			  // //console.log(ca[5]);		
+			   // //console.log("ca["+i+"] :"+ca[i].search("UserId"));		
 			  if(ca[i].search("UserId")>=0)		
 			  {		
 				  c = ca[i];		
@@ -103,37 +103,37 @@
 			  }		
 			// while (c.charAt(0) == ' ') {		
 			  // c = c.substring(1);		
-			  // console.log(c);		
+			  // //console.log(c);		
 			// }		
 			if (c.indexOf(name) == 0) {		
-				console.log(c.substring(name.length, c.length));		
+				//console.log(c.substring(name.length, c.length));		
 			  return c.substring(name.length, c.length);		
 			}		
 	}		
 		  if(c.search("UserId") >= 0)		
 		  {		
-			  console.log("C : "+c);		
+			  //console.log("C : "+c);		
 			  return c;		
 		  }else		
 		  {			
-			  console.log("C : ");		
+			  //console.log("C : ");		
 			  return "";		
 		  }		
 		  		
 		}		
 	function checkCookie() {		
 		  user=getCookie("username");		
-		   console.log("user1 : "+user);		
-				console.log("user.search : "+user.search("ChatCookie"));	
+		   //console.log("user1 : "+user);		
+				//console.log("user.search : "+user.search("ChatCookie"));	
 		    if (user.search("ChatCookie") >= 0) {		
 				user = user.split(',');		
-				console.log("usersplit : "+user);		
+				//console.log("usersplit : "+user);		
 				for(var j=0;j<user.length; j++)		
 				{		
 					var mark = 0;		
 					mark = user[j].search("=");		
-					// console.log("mark : "+mark);		
-					console.log(user[j].substring(mark+1));		
+					// //console.log("mark : "+mark);		
+					//console.log(user[j].substring(mark+1));		
 					valcookie[j]=user[j].substring(mark+1);		
 				}		
 						
@@ -148,7 +148,7 @@
 			}
 			else {		
 				 // user = "ChatCookie";		
-				 // console.log("user2 : "+user);		
+				 // //console.log("user2 : "+user);		
 				 // setCookie("username", user, 0.00105);		
 			 }		
 	}		
@@ -164,8 +164,8 @@
 			paramUrl[temp[0]] = temp[1]; 
 			}); 
 		}
-		console.log(paramUrl['Cobrowse']);
-		console.log(paramUrl);
+		//console.log(paramUrl['Cobrowse']);
+		//console.log(paramUrl);
 		if(paramUrl['Cobrowse'] != "")
 		{
 			
@@ -173,7 +173,7 @@
 			// channel = $("input[id=SubmitterSourceName]").val();
 			if(paramUrl['Cobrowse'] == "true")
 			{
-				console.log("yes");
+				//console.log("yes");
 				$(".gcb-startCobrowse").click();
 			}
 			
@@ -183,13 +183,13 @@
 		{
 			
 			langweb = langweb.toUpperCase()
-			console.log(langweb);
+			//console.log(langweb);
 			wgLanguage = langweb;
 		}
 	}
 	
 	function readConfig(lang){
-		console.log("lang : "+lang);
+		//console.log("lang : "+lang);
 		wgLanguage = lang;
 		document.getElementById("messagechat").placeholder = wgSystem[wgLanguage]["messageresponse"]["Textsent"];
 		// readWgMessageClient(lang,"messageresponse");
@@ -208,10 +208,10 @@
 		$("#btn-end").attr("onclick","endChat()");		
 		$("#btn-Send").attr("onclick","sendMsg()");		
 		$("#uploadfile").attr("onchange","attach(this.files)");
-		console.log(isIE);
+		//console.log(isIE);
 		if(isIE)
 		{
-			console.log("เข้าจากIE");
+			//console.log("เข้าจากIE");
 		}
 		firstmessage = true;
 		$("#Product").val("");
@@ -228,7 +228,7 @@
 		if(!$("#"+wgChatboxId).hasClass("hide")){
 			return;	
 		}
-		 console.log(emoji);		
+		 //console.log(emoji);		
 		document.getElementById("messagechat").placeholder = wgSystem[wgLanguage]["messageresponse"]["Textsent"];
 		$("#"+wgChatboxId).removeClass("hide");
 		
@@ -331,7 +331,7 @@
 	function openConfirmEnd(data){
 		$(".comfirm-end-background").removeClass("hide");
 		$(".comfirm-end-box").removeClass("hide");
-		console.log(data);
+		//console.log(data);
 		if(data == "end")
 		{	
 			
@@ -370,8 +370,8 @@
 	}
 	
 	function onMessageAlert(data){
-		console.log("internet : "+internet);
-		console.log("firstmessage : "+firstmessage);
+		//console.log("internet : "+internet);
+		//console.log("firstmessage : "+firstmessage);
 		if(internet || firstmessage)
 		{	$(".comfirm-end-background").removeClass("hide");
 			$(".comfirm-end-box").removeClass("hide");
@@ -430,8 +430,18 @@
 				 }
 				$("#GCTI_LanguageCode").val("");
 				requestChat();
-			} else{			
+			} else{
+				// oChat.sendMessage(text);
+				var isUrl = false;
+				webSystax.forEach(function(x){
+					if(text.search(x) != -1){
+						isUrl = true;
+						return;
+					}
+				});
+									
 					oChat.sendMessage(text);
+				
 			}
 		},timeReadCsv);
 		
@@ -446,8 +456,8 @@
 	
 	
 	function selectProductService(pin,txt){
-		console.log(pin);
-		console.log(txt);
+		//console.log(pin);
+		//console.log(txt);
 		if(selecInten == false)
 		{
 			var v = pin.split("-");
@@ -484,8 +494,8 @@
 			var formchat = $('#formchat').serialize();
 			oChat = new ChatFactory({
 				baseURL: "https://galb.truecorp.co.th",   //Production URL
-				<!--baseURL: "https://galb-dev.truecorp.co.th",-->	//DEV URL
-				<!--baseURL: "https://172.16.56.134:8443",-->	//UAT URL
+				<!--baseURL: "https://galb-dev.truecorp.co.th",-->		//DEV URL
+				<!--baseURL: "https://172.16.56.134:8443",-->//UAT URL
 				chatServiceName: "gms-chat",
 				useCometD: false,
 				verbose: true,
@@ -502,22 +512,22 @@
 			});
 			// Start the chat using the variable in form.
 			oChat.startChat(formchat);
-			console.log(formchat);
+			//console.log(formchat);
 			createMessage(wgMsgMari,wgSystem[wgLanguage]["messageresponse"]["ChatStarted"]);
-			console.log("ยังไม่ส่งข้อความแรก");
-			console.log(firstmessage);
+			//console.log("ยังไม่ส่งข้อความแรก");
+			//console.log(firstmessage);
 			setTimeout(function(){
 				if(firstmessage == true)
 			{
-				console.log("เข้าข้อความแรก");
-				console.log($("input[name=Subject]").val());
+				//console.log("เข้าข้อความแรก");
+				//console.log($("input[name=Subject]").val());
 				oChat.sendMessage($("input[name=Subject]").val());
 				
 			}
 			}, 2000);  
 		}else if(chat == "ChatCookie")
 		{
-			console.log("มันเข้าcookieนะ");
+			//console.log("มันเข้าcookieนะ");
 			var formchat = "ChatCookie";
 			oChat = new ChatFactory({
 				baseURL: "https://galb.truecorp.co.th", 
@@ -541,9 +551,9 @@
 			oChat.startChat(formchat);
 		}
 		// $('textarea[name=messagechat-re]').val($("input[name=Subject]").val());
-		// console.log("test subject : "+$('textarea[name=messagechat-re]').val());
+		// //console.log("test subject : "+$('textarea[name=messagechat-re]').val());
 		// var text = $('textarea[name=messagechat-re]').val();
-		// console.log("test text subject : "+text);
+		// //console.log("test text subject : "+text);
 		// oChat.sendMessage(text);
 		// firstmessage = true;
 		// sendMsg();
@@ -564,21 +574,21 @@
   function onMessageReceived(typeFrom,typeMsg,nickname,textMsg,chatend) {
 		
 		var msg = "";
-		console.log(typeFrom);
-		console.log(typeMsg);
-		console.log(nickname);
-		console.log(textMsg);
-		console.log(chatend);
+		//console.log(typeFrom);
+		//console.log(typeMsg);
+		//console.log(nickname);
+		//console.log(textMsg);
+		//console.log(chatend);
 		if ( typeMsg === 'Message' || typeMsg === 'Message.Text' ) {
 			var n = textMsg.search("http");
-			console.log("N : "+n);
+			//console.log("N : "+n);
 			if(n>1)
 			{
 				var	texth = textMsg.substring(0, n)
 				var urlweb = textMsg.substring(n,textMsg.length);	
 				var m = urlweb.search(" ");
 				var textn = urlweb.substring(m,textMsg.length)
-				console.log("textn : "+textn);
+				//console.log("textn : "+textn);
 				if(m > 0)
 				{
 					urlweb = urlweb.substring(0, m);
@@ -589,16 +599,16 @@
 					urlweb = urlweb.substring(0, textMsg.length);
 					msg = ""+texth+"<a href='"+urlweb+"' target='_blank' >"+urlweb+"</a>";
 				}
-				console.log("M : "+m);
-				console.log("textMsg.length : "+textMsg.length);
-				console.log("urlweb : "+urlweb);
+				//console.log("M : "+m);
+				//console.log("textMsg.length : "+textMsg.length);
+				//console.log("urlweb : "+urlweb);
 				// msg = textt+" "+urlweb;
 			}
 			else if(n>=0 && n<2){
 			var urlweb = textMsg.substring(n,textMsg.length);	
 				var m = urlweb.search(" ");
 				var textn = urlweb.substring(m,textMsg.length)
-				console.log("textn : "+textn);
+				//console.log("textn : "+textn);
 				if(m > 0)
 				{
 					urlweb = urlweb.substring(0, m);
@@ -609,9 +619,9 @@
 					urlweb = urlweb.substring(0, textMsg.length);
 					msg = "<a href='"+urlweb+"' target='_blank' >"+urlweb+"</a>";	
 				}
-				console.log("M : "+m);
-				console.log("textMsg.length : "+textMsg.length);
-				console.log("urlweb : "+urlweb); 
+				//console.log("M : "+m);
+				//console.log("textMsg.length : "+textMsg.length);
+				//console.log("urlweb : "+urlweb); 
 			}
 			else{
 			msg = textMsg;
@@ -665,9 +675,9 @@
 				 }
 			
 		} else if(typeFrom === "Agent"){
-			console.log("เอเจ้น");
-			if(msg == wgSystem[wgLanguage]["messageresponse"]["Leftchat"] || chatend == true){
-				console.log("เข้าออกจากระบบ");
+			//console.log("เอเจ้น");
+			if(msg == wgSystem[wgLanguage]["messageresponse"]["Leftchat"] && chatend == true){
+				//console.log("เข้าออกจากระบบ");
 				removeTyping();
 				$('#btn-Send').prop('disabled', true);
 				$('#uploadfile').prop('disabled', true);
@@ -681,8 +691,8 @@
 				
 			}
 			if(isewt == true)
-			{	console.log("isewt : "+isewt);
-				console.log("เข้าewtเงื่อนไข");
+			{	//console.log("isewt : "+isewt);
+				//console.log("เข้าewtเงื่อนไข");
 				clearTimeout(timeselecter);
 				if(document.getElementById('li-btn-selecter') != null && chanelselect == true )
 				{
@@ -691,7 +701,7 @@
 					isewt = false;
 					chanelselect = false;
 				}else if($("#li-btn-sms") && isewt && chanelselect == false){
-					console.log("เข้าทุกเงื่อนไข");
+					//console.log("เข้าทุกเงื่อนไข");
 					clearTimeout(SmsTime);
 					if(document.getElementById('li-btn-sms') != null){
 					document.getElementById('li-btn-sms').parentNode.removeChild(document.getElementById('li-btn-sms'));	
@@ -704,7 +714,7 @@
 			
 			else if(msg != wgSystem[wgLanguage]["messageresponse"]["Leftchat"] && chatend == false)
 			{
-				console.log("เคสปกติ");
+				//console.log("เคสปกติ");
 				removeTyping();
 				createMessage(wgMsgAgent,msg);
 			}
@@ -717,7 +727,7 @@
 				var obja ={};
 				obj = msg.split(",");
 				
-				console.log("EWT : "+obj[1]);
+				//console.log("EWT : "+obj[1]);
 				 if(obj[1] > ewttime)   //ewttime
 				 {
 					timefilter(msg);
@@ -726,7 +736,7 @@
 				obja = msg.split("_");
 				$("#Product").val(obja[3]);
 				$("#user_intent").val(obja[4]);
-				console.log("obj : "+obj);
+				//console.log("obj : "+obj);
 			}else if(msg == wgSystem[wgLanguage]["messageresponse"]["Joinedchat"]){
 				return;
 			}else{
@@ -736,7 +746,7 @@
 				}
 				else
 				{	
-					console.log("msg : "+msg);
+					//console.log("msg : "+msg);
 					SplashMes.push(msg);
 				}
 			}
@@ -795,7 +805,7 @@
 	}
 	
 	function onDownloadFileIE(data,filename){
-		console.log("โหลดไฟล์จากIE");
+		//console.log("โหลดไฟล์จากIE");
 		// // var ev = document.createEvent("MouseEvents");
 		// // ev.initMouseEvent("click", true, false, self, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
 		// var a = document.createElement('a');
@@ -805,9 +815,9 @@
 		// a.href = url;
 		// a.download = filename;
 		// a.click();
-		// console.log(url);
-		// console.log(filename);
-		// console.log(data);
+		// //console.log(url);
+		// //console.log(filename);
+		// //console.log(data);
 		// // a.dispatchEvent(ev);
 		// // setTimeout(function(){
 		// window.URL.revokeObjectURL(url);
@@ -821,19 +831,19 @@
 	}
 	
 	function endChat(){
-		console.log(end);
+		//console.log(end);
 		if(end == true)
 		{
 			var val={DisconnectReason:"Chat_UserEnd"};
-			console.log(val);
-			console.log("end : "+end);
+			//console.log(val);
+			//console.log("end : "+end);
 			oChat.updateUserDataChat(val);
 			end = false;
 		}
 		else{
 			var val={DisconnectReason:"Chat_ChannelSelectorTimeout"};
-			console.log(val);
-			console.log("end : "+end);
+			//console.log(val);
+			//console.log("end : "+end);
 			oChat.updateUserDataChat(val);
 			
 		}
@@ -862,14 +872,14 @@
 	$(document).on('keypress','textarea[name=messagechat-re]',function(e) { 
 		if ( e.which == 13 ) {
 			
-			console.log(e.which);
+			//console.log(e.which);
 			e.preventDefault();sendMsg();
 		} 
 	});
 	
 	function timefilter(dataArr) {
 		// createMessage(wgSelect,text); 
-		// console.log(dataMessage["btn_cancel"]);
+		// //console.log(dataMessage["btn_cancel"]);
 		// createBtnInChat("chselect");
 		
 		var obj = {};
@@ -879,7 +889,7 @@
 		 {	
 			x = obj[1]/60;
 			x = Math.round(x);
-			console.log(x);
+			//console.log(x);
 			var messageewt = wgSystem[wgLanguage]["messageresponse"]["EWT"].replace("_X_",x);
 			createMessage(wgMsgMari,messageewt);	
 			createBtnSelect(wgBtnQ,wgBtnCancelQ,wgBtnEmail);
@@ -943,10 +953,10 @@
 	function submitSms(){
 		isewt = false;
 		var smsval={SMSContactNumber:$('#sms').val().trim()};
-		console.log(smsval);
+		//console.log(smsval);
 		oChat.updateUserDataChat(smsval);
 		document.getElementById('li-btn-sms').parentNode.removeChild(document.getElementById('li-btn-sms'));
-		console.log("SplashMes : "+SplashMes.length);
+		//console.log("SplashMes : "+SplashMes.length);
 		for(var j=0;j<1;j++){		//SplashMes.length
 			createMessage(wgMsgMariload,SplashMes[j]);					}		
 			isewt = false;		
@@ -964,14 +974,14 @@
 			}
 		}
 		filesize = filesize-parseInt(filelist[numfile]["size"]);
-		console.log(filesize);
-		console.log(parseInt(filelist[numfile]["size"]));
+		//console.log(filesize);
+		//console.log(parseInt(filelist[numfile]["size"]));
 		filelist.splice(numfile, 1);
 		refileattach(filelist);
 	}
 	
 	function handleFileSelect(evt,num) {
-		console.log(evt[0]["name"]);
+		//console.log(evt[0]["name"]);
 	  var file = [];
 
 
@@ -988,7 +998,7 @@
 			  // filesendmail[k].fileName = "Pae";
 			  // filesendmail[k].fileBase64 = base64String;
 			  filesendmail.push({"fileName": evt[num]['name'],"fileBase64":base64String});
-			  console.log("fileName: "+evt[num]['name']+",fileBase64:"+base64String);
+			  //console.log("fileName: "+evt[num]['name']+",fileBase64:"+base64String);
 			  //showing file converted to base64
 			  // document.getElementById('fileemail').value = base64String;
 			  
@@ -1000,7 +1010,7 @@
 		  reader.readAsBinaryString(f);
 	  // }
 	  // filesendmail.push(file);
-	  console.log(filesendmail);
+	  //console.log(filesendmail);
 
 	}
 	
@@ -1015,12 +1025,12 @@
 			
 			var ck1name = name.substring(ckname+1, name.length);
 			
-			console.log(fmail[l]["name"]);
-			console.log(ckname);
-			console.log(ck1name);
+			//console.log(fmail[l]["name"]);
+			//console.log(ckname);
+			//console.log(ck1name);
 			
 				typefile.forEach(function(x){
-					console.log(x);
+					//console.log(x);
 					if(ck1name.search(x) != -1){
 						istypeFile = true;
 						return;
@@ -1028,12 +1038,12 @@
 				});
 				
 		}
-		console.log(filesize);
-		console.log(size);
+		//console.log(filesize);
+		//console.log(size);
 		if(istypeFile && size <= filesizemax)
 		{	
 			filesize += size;
-			console.log(filesize);
+			//console.log(filesize);
 			createfileattach(fmail);
 		}else if(!istypeFile)
 		{
@@ -1041,7 +1051,7 @@
 		}else if(size > filesizemax)
 		{
 			
-			console.log(filesize);
+			//console.log(filesize);
 			onMessageAlert(wgSystem[wgLanguage]["messageresponse"]["Error-Max-Total-Size"]);
 		}
 				
@@ -1061,8 +1071,8 @@
 		"attachFileDetail" : filesendmail
 			}
 		});
-			console.log(oMail);
-			console.log(filelist);
-			console.log(filesendmail);
+			//console.log(oMail);
+			//console.log(filelist);
+			//console.log(filesendmail);
 	}
 	
